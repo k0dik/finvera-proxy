@@ -19,6 +19,7 @@ app.get("/finvera", async (req, res) => {
     const data = await response.json();
     res.json(data);
   } catch (err) {
+    console.error('Proxy error details:', err); // <--- добавь эту строчку!
     res.status(500).send("Proxy error");
   }
 });
