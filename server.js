@@ -5,7 +5,7 @@ const cors = require("cors");
 const app = express();
 app.use(cors());
 
-const FINVERA_API_KEY = "finvera_8fc72443ab2bea7631fb24bdce49611bd041071db2fd4efb15f2fd18e0243793"; // Сюда вставь свой API ключ
+const FINVERA_API_KEY = "finvera_8fc72443ab2bea7631fb24bdce49611bd041071db2fd4efb15f2fd18e0243793"; // Вставь свой ключ!
 
 app.get("/finvera", async (req, res) => {
   try {
@@ -16,10 +16,25 @@ app.get("/finvera", async (req, res) => {
         Accept: "application/json"
       }
     });
-    const data = await response.json();
-    res.json(data);
+    // Логируем статус ответа API
+    console.log('Finvera API status:', response.status);
+    // Получаем сырой текст
+    const text = await response.text();
+    console.log('Finvera API response:', text);
+
+    // Пробуем парсить результат как JSON
+    let data;
+    try {
+      data = JSON.parse(text);
+      res.json(data);
+    } catch (e) {
+      // Ловим ошибку парсинга JSON
+      console.error('JSON parse error:', e);
+      res.status(response.status).send(text);
+    }
   } catch (err) {
-    console.error('Proxy error details:', err); // <--- добавь эту строчку!
+    // Логируем ошибки запроса
+    console.error('Proxy error details:', err);
     res.status(500).send("Proxy error");
   }
 });
